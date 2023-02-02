@@ -9,7 +9,7 @@ export interface StockAttributes {
     batchId: string; 
 }
 
-export class StockInstance extends Model<StockAttributes> {}
+export class StockInstance extends Model {}
 
 StockInstance.init(
   {

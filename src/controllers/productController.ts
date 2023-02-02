@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { ProductInstance } from '../models/productModel';
+import { Request, Response } from "express";
+import { ProductInstance } from "../models/productModel";
 
 export default {
   async index(req: Request, res: Response) {
@@ -13,26 +13,42 @@ export default {
     const product = await ProductInstance.findByPk(id);
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: "Product not found" });
     }
 
     return res.json(product);
   },
 
   async create(req: Request, res: Response) {
-    const { stockId, productName, productPrice, productType, expiringDate, barcode } = req.body;
-    const product = await ProductInstance.create({ id, stockId, productName, productPrice, productType, expiringDate, barcode });
+    const {
+      stockId,
+      productName,
+      productPrice,
+      productType,
+      expiringDate,
+    } = req.body;
+    const product = await ProductInstance.create({
+      stockId,
+      productName,
+      productPrice,
+      productType,
+      expiringDate,
+    });
 
     return res.json(product);
   },
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { productName, productPrice, productType, expiringDate, barcode } = req.body;
-    const [updated] = await ProductInstance.update({ productName, productPrice, productType, expiringDate, barcode }, { where: { id } });
+    const { productName, productPrice, productType, expiringDate } =
+      req.body;
+    const [updated] = await ProductInstance.update(
+      { productName, productPrice, productType, expiringDate },
+      { where: { id } }
+    );
 
     if (!updated) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: "Product not found" });
     }
 
     const product = await ProductInstance.findByPk(id);
@@ -45,10 +61,9 @@ export default {
     const deleted = await ProductInstance.destroy({ where: { id } });
 
     if (!deleted) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: "Product not found" });
     }
 
     return res.status(204).send();
   },
 };
-

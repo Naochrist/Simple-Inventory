@@ -1,18 +1,16 @@
-import { DataTypes, Model } from 'sequelize';
-import db from '../config/dbConfig';
-
+import { DataTypes, Model } from "sequelize";
+import db from "../config/dbConfig";
 
 export interface ProductAttributes {
   id: string;
   stockId: string;
-  productName?: string;
+  productName: string;
   productPrice: string;
   productType: string;
   expiringDate: string;
-  barcode: string;
 }
 
-export class ProductInstance extends Model<ProductAttributes> {}
+export class ProductInstance extends Model {}
 
 ProductInstance.init(
   {
@@ -27,12 +25,11 @@ ProductInstance.init(
       primaryKey: true,
       allowNull: false,
     },
-    
+
     productName: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       unique: true,
-
     },
     productPrice: {
       type: DataTypes.DECIMAL(10, 2),
@@ -42,13 +39,10 @@ ProductInstance.init(
     productType: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: false,
       validate: {
         notNull: {
-          msg: 'Product category is required',
-        },
-        isProduct: {
-          msg: 'Please provide a valid product category',
+          msg: "Product category is required",
         },
       },
     },
@@ -58,21 +52,16 @@ ProductInstance.init(
       unique: true,
       validate: {
         notNull: {
-          msg: 'expiringDate is required',
+          msg: "expiringDate is required",
         },
         isNumeric: {
-          msg: 'Please provide a expiring date',
+          msg: "Please provide a expiring date",
         },
       },
-    },
-    barcode: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
     },
   },
   {
     sequelize: db,
-    tableName: 'Product',
-  },
+    tableName: "Product",
+  }
 );

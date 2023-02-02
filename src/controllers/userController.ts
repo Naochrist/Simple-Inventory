@@ -36,7 +36,7 @@ export const RegisterUser = async (req: Request, res: Response): Promise<unknown
     }
     const hashPassword = await bcrypt.hash(req.body.password, 10);
 
-    const { firstName, lastName, userName, email, phoneNumber, walletBalance } = req.body;
+    const { firstName, lastName, userName, email, phoneNumber } = req.body;
 
     const user = {
       id: userId,
@@ -50,10 +50,10 @@ export const RegisterUser = async (req: Request, res: Response): Promise<unknown
     const record = await UserInstance.create(user);
 
     const token = generateLoginToken({ userId, email });
-    if (record) {
-      const html = emailVerificationView(token);
-      await mailer.sendEmail(fromUser, req.body.email, 'please verify your email', html);
-    }
+  //   if (record) {
+  //     const html = emailVerificationView(token);
+  //     await mailer.sendEmail(fromUser, req.body.email, 'please verify your email', html);
+  //   }
     return successResponse(res, 'User created successfully', httpStatus.CREATED, { ...record, token });
   } catch (error) {
     console.log(error);
@@ -121,9 +121,10 @@ export async function forgotPassword(req: Request, res: Response) {
     const { id } = user;
     const subject = 'Password Reset';
     const token = jwt.sign({ id }, jwtsecret, { expiresIn: '30mins' });
-    const html = forgotPasswordVerification(token);
-    await mailer.sendEmail(fromUser, req.body.email, subject, html);
-    return successResponse(res, 'Check email for the verification link', httpStatus.OK, {});
+    return token
+    // const html = forgotPasswordVerification(token);
+    // await mailer.sendEmail(fromUser, req.body.email, subject, html);
+    // return successResponse(res, 'Check email for the verification link', httpStatus.OK, {});
   } catch (error) {
     console.log(error);
     return serverError(res);
