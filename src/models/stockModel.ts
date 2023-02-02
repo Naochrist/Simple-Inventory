@@ -3,24 +3,29 @@ import db from '../config/dbConfig';
 
 
 export interface StockAttributes {
-  batchId: string;
-  productId?: string;
-  quantity: number; 
+    id: number;
+    productName: string;
+    quantity: number;
+    batchId: string; 
 }
 
 export class StockInstance extends Model<StockAttributes> {}
 
 StockInstance.init(
   {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
     batchId: {
       type: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
     },
-    productId: {
-        type: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
+    productName: {
+        type: DataTypes.STRING,
+        allowNull: false
       },
    
     quantity: {
@@ -36,7 +41,6 @@ StockInstance.init(
         },
       },
     },
-
   },
   {
     sequelize: db,

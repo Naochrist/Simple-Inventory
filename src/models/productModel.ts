@@ -4,8 +4,9 @@ import db from '../config/dbConfig';
 
 export interface ProductAttributes {
   id: string;
-  productId: string;
+  stockId: string;
   productName?: string;
+  productPrice: string;
   productType: string;
   expiringDate: string;
   barcode: string;
@@ -21,7 +22,7 @@ ProductInstance.init(
       allowNull: false,
     },
 
-    productId: {
+    stockId: {
       type: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
@@ -33,6 +34,11 @@ ProductInstance.init(
       unique: true,
 
     },
+    productPrice: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+
     productType: {
       type: DataTypes.STRING,
       allowNull: false,
