@@ -21,7 +21,7 @@ export default {
 
   async create(req: Request, res: Response) {
     const { stockId, productName, productPrice, productType, expiringDate, barcode } = req.body;
-    const product = await ProductInstance.create({ stockId, productName, productPrice, productType, expiringDate, barcode });
+    const product = await ProductInstance.create({ id, stockId, productName, productPrice, productType, expiringDate, barcode });
 
     return res.json(product);
   },

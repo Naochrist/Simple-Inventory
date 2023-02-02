@@ -6,11 +6,8 @@ import logger from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv'
 import usersRouter from './routes/userRoutes';
-import db from './config/db.config';
-import bankAccountRouter from './routes/bankAccountRoute';
-import transferRoutes from '././routes/transferRoutes';
-import withdrawalRoute from './routes/withdrawalTransactionRoute';
-import walletRouter from './routes/walletRoute';
+import db from '../src/config/dbConfig';
+
 
 process.env.NODE_ENV !== 'test' && db.sync()
   // db.sync({ force: true })
@@ -28,13 +25,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 app.use('/api-v1/users', usersRouter);
-app.use('/api-v1/accounts', bankAccountRouter);
-app.use('/api-v1/withdrawal', withdrawalRoute);
 
-app.use('/api-v1/transactions', transferRoutes);
-app.use('/api-v1/wallet', walletRouter);
 
-// catch 404 and forward to error handler
+
 
 app.use(function (
   err: createError.HttpError,

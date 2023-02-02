@@ -2,13 +2,11 @@ import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { UserInstance } from '../models/userModel';
 import { generateLoginToken } from '../utils/utils';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { errorResponse, serverError, successResponse, successResponseLogin } from '../utils/helperMethods';
+// import { forgotPasswordVerification } from '../mailer/forgotPasswordVerification';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
-
-
-import moment from 'moment';
 
 import dotenv from 'dotenv'
 
@@ -20,6 +18,7 @@ interface jwtPayload {
   email: string;
   id: string;
 }
+
 export const RegisterUser = async (req: Request, res: Response): Promise<unknown> => {
   const userId = uuidv4();
   try {
@@ -44,10 +43,23 @@ export const RegisterUser = async (req: Request, res: Response): Promise<unknown
       firstName,
       lastName,
       userName,
+      email,
       phoneNumber,
       password: hashPassword,
     };
     const record = await UserInstance.create(user);
+
+    const token = generateLoginToken({ userId, email });
+    if (record) {
+      const html = emailVerificationView(token);
+      await mailer.sendEmail(fromUser, req.body.email, 'please verify your email', html);
+    }
+    return successResponse(res, 'User created successfully', httpStatus.CREATED, { ...record, token });
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+};
 
 export async function verifyUser(req: Request, res: Response) {
   try {
@@ -106,6 +118,17 @@ export async function forgotPassword(req: Request, res: Response) {
     if (!user) {
       return errorResponse(res, 'Email not found', httpStatus.NOT_FOUND);
     }
+    const { id } = user;
+    const subject = 'Password Reset';
+    const token = jwt.sign({ id }, jwtsecret, { expiresIn: '30mins' });
+    const html = forgotPasswordVerification(token);
+    await mailer.sendEmail(fromUser, req.body.email, subject, html);
+    return successResponse(res, 'Check email for the verification link', httpStatus.OK, {});
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+}
 
 export async function changePassword(req: Request, res: Response) {
   try {
@@ -185,4 +208,32 @@ export async function userCount(req: Request | any, res: Response) {
     serverError(res);
   }
 }
+
+export const adminOtp = async (req: Request, res: Response): Promise<unknown> => {
+  try {
+    const token = req.headers.token as string;
+    const otpId = uuidv4();
+    const { id } = jwt.verify(token, jwtsecret) as jwtPayload;
+
+    const admin = (await UserInstance.findOne({
+      where: { id },
+    })) as unknown as { [key: string]: string };
+
+    if (!admin) {
+      return errorResponse(res, 'admin not found', httpStatus.BAD_REQUEST);
+    }
+  //  const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+
+  //  if (admin) {
+  //   const html = otpMessage(otp);
+  //     await mailer.sendEmail(fromUser, admin.email, 'Check your mail for otp', html);
+  //     await OtpInstance.create({id: otpId, otp, userId: id})
+  //   }
+  //   return successResponse(res, 'Kindly check your mail for OTP ', httpStatus.OK, {});
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+};
+
 

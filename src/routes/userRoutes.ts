@@ -1,9 +1,31 @@
 import { Router } from 'express';
-import { sampleUserFn } from '../controllers/users';
+import {
+  LoginUser,
+  RegisterUser,
+  verifyUser,
+  forgotPassword,
+  UpdateUser,
+  getUser,
+  userCount,
+  
+} from '../controllers/userController';
+import {
+  validateSignupUser,
+  validateLoginUser,
+  validateForgotPassword,
+  validateChangePassword,
+  validateUpdateUser,
+} from '../middleware/validations';
+import { auth } from '../middleware/auth';
 
 const router = Router();
 
-/* METHOD and summary info */
-router.get('/', sampleUserFn);
-
+router.post('/signup', validateSignupUser, RegisterUser);
+router.post('/forgot-password', validateForgotPassword, forgotPassword);
+router.post('/change-password', auth, validateChangePassword);
+router.post('/login', validateLoginUser, LoginUser);
+router.get('/verify/:token', verifyUser);
+router.patch('/update', auth, validateUpdateUser, UpdateUser);
+router.get('/getuser', auth, getUser);
+router.get('/count', auth, userCount);
 export default router;

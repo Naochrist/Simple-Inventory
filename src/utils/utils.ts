@@ -48,8 +48,17 @@ export const changePasswordSchema = Joi.object()
 export const updateUserSchema = Joi.object().keys({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
+  option:Joi.string(),
   phoneNumber: Joi.string()
     .length(11)
     .pattern(/^[0-9]+$/)
     .required(),
 });
+export const options = {
+  abortEarly: false,
+  errors: {
+    wrap: {
+      label: '',
+    },
+  },
+}
