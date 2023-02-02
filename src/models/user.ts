@@ -1,9 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
-import db from '../config/db.config';
+import db from '../config/dbConfig';
 
 
 export interface UserAttributes {
-  batchId: string;
+  id: string;
   firstName: string;
   lastName: string;
   userName?: string;
@@ -19,7 +19,7 @@ export class UserInstance extends Model<UserAttributes> {}
 
 UserInstance.init(
   {
-    batchId: {
+    id: {
       type: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
@@ -84,16 +84,6 @@ UserInstance.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-    },
-    role:{
-      type:DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'User',
-    },
-    isVerified: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
     },
   },
   {

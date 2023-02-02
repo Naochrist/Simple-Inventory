@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { UserInstance } from '../models/userModel';
-import { generateLoginToken } from '../utils/utils';
+import { UserInstance } from '../models/user';
+// import { generateLoginToken } from '../utils/utils';
 import bcrypt from 'bcryptjs';
 import { errorResponse, serverError, successResponse, successResponseLogin } from '../utils/helperMethods';
 import { forgotPasswordVerification } from '../mailer/forgotPasswordVerification';
