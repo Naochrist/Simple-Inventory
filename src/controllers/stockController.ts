@@ -1,30 +1,54 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
+import httpStatus from 'http-status';
 import { StockInstance } from '../models/stockModel';
+import { errorResponse, serverError, successResponse } from '../utils/helperMethods';
 
-const router = Router();
 
-router.get('/stocks', async (req: Request, res: Response) => {
-  const stocks = await StockInstance.findAll();
-  res.json(stocks);
-});
+export const AddStock = async (req: Request, res: Response) => {
+  try {
+    const { productId, quantity, batchId } = req.body;
+    const duplicate = await StockInstance.findOne({where: {batchId} })
+    if (duplicate) {
+      return errorResponse(res, 'BatchId already exists', httpStatus.CONFLICT)
+    }
 
-router.post('/stocks', async (req: Request, res: Response) => {
-  const { productName, quantity, batchId } = req.body;
-  const stock = await StockInstance.create({ productName, quantity, batchId });
-  res.json(stock);
-});
+    const stock = await StockInstance.create({ productId, quantity, batchId });
+    if (stock) {
+      return successResponse(res, 'Stock added', httpStatus.CREATED, stock)
+    } else {
+      return errorResponse(res, 'Failed to add stock', httpStatus.BAD_GATEWAY)
+    }
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+}
 
-router.put('/stocks/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { productName, quantity, batchId } = req.body;
-  const stocks = await StockInstance.update({ productName, quantity, batchId }, { where: { id } });
-  res.json(stocks);
-});
+export const FetchStock = async (req: Request, res: Response) => {
+  try {
+    const stocks = await StockInstance.findAll();
+    if (stocks.length) {
+      return successResponse(res, 'Stocks found', httpStatus.OK, stocks)
+    } else {
+      return errorResponse(res, 'No stock found', httpStatus.NOT_FOUND)
+    }
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+} 
 
-router.delete('/stocks/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  await StockInstance.destroy({ where: { id } });
-  res.json({ message: 'Stock deleted successfully' });
-});
-
-export { router as stockRouter };
+export const FetchStockById = async (req: Request, res: Response) => {
+  try {
+    const { batchId } = req.params;
+    const stock = await StockInstance.findOne({ where: { batchId } });
+    if (stock) {
+      return successResponse(res, 'Stock found', httpStatus.OK, stock)
+    } else {
+      return errorResponse(res, 'No stock found', httpStatus.NOT_FOUND)
+    }
+  } catch (error) {
+    console.log(error);
+    return serverError(res);
+  }
+}

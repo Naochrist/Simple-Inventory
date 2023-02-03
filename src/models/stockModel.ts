@@ -3,31 +3,24 @@ import db from '../config/dbConfig';
 
 
 export interface StockAttributes {
-    id: number;
-    productName: string;
-    quantity: number;
-    batchId: string; 
+  batchId: string;   
+  productId: string;
+  quantity: number;
 }
 
 export class StockInstance extends Model {}
 
 StockInstance.init(
   {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-      },
     batchId: {
       type: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
     },
-    productName: {
+    productId: {
         type: DataTypes.STRING,
         allowNull: false
-      },
-   
+    },
     quantity: {
       type: DataTypes.NUMBER,
       allowNull: false,
