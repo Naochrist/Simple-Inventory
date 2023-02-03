@@ -5,8 +5,10 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
-import usersRouter from "./routes/userRoutes";
 import db from "./config/dbConfig";
+import { usersRouter } from "./routes/userRoutes";
+import { productsRouter } from "./routes/productRoutes";
+import { stockRouter } from "./routes/stockRoutes";
 
 dotenv.config();
 
@@ -21,7 +23,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
+
 app.use("/api-v1/users", usersRouter);
+app.use("/api-v1/products", productsRouter);
+app.use("/api-v1/stock", stockRouter)
+
 
 app.use(function (
   err: createError.HttpError,

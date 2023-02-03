@@ -6,13 +6,8 @@ export interface UserAttributes {
   id: string;
   firstName: string;
   lastName: string;
-  userName?: string;
   email: string;
-  phoneNumber: string;
   password: string;
-  isVerified?: boolean;
-  
-  role?:string;
 }
 
 export class UserInstance extends Model<UserAttributes> {}
@@ -48,12 +43,6 @@ UserInstance.init(
         },
       },
     },
-    userName: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      unique: true,
-
-    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -64,19 +53,6 @@ UserInstance.init(
         },
         isEmail: {
           msg: 'Please provide a valid email',
-        },
-      },
-    },
-    phoneNumber: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        notNull: {
-          msg: 'PhoneNumber is required',
-        },
-        isNumeric: {
-          msg: 'Please provide a valid phone number',
         },
       },
     },
